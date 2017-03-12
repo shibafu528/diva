@@ -3,11 +3,8 @@
   いろんなリソースの基底クラス
 =end
 
-require 'diva/model_extend'
-require 'diva/uri'
-require 'diva/spec'
-
-require 'securerandom'
+# extendでコケる、とりあえずあとで解決する
+module Diva::ModelExtend; end
 
 class Diva::Model
   include Comparable

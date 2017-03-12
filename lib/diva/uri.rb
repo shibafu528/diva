@@ -27,13 +27,10 @@ Diva::URI() メソッドの引数にString, URI, Addressable::URI, Hash, Diva::U
     Diva::URI(URI::Generic.build(scheme: 'http', host: 'mikutter.hachune.net'))
 =end
 
-require 'uri'
-require 'addressable/uri'
-
 class Diva::URI
   def initialize(uri)
     case uri.freeze
-    when URI, Addressable::URI
+    when *uri_types
       @uri = uri
     when String
       @uri_string = uri
@@ -44,7 +41,7 @@ class Diva::URI
 
   def ==(other)
     case other
-    when URI, Addressable::URI
+    when *uri_types
       other == to_uri
     when Diva::URI
       if has_string? or other.has_string?
@@ -118,14 +115,22 @@ class Diva::URI
   end
 
   def generate_uri_by_string
-    URI.parse(@uri_string)
-  rescue URI::InvalidComponentError
+    ::URI.parse(@uri_string)
+  rescue ::URI::InvalidComponentError
+    raise unless Module.const_defined?(:Addressable)
     Addressable::URI.parse(@uri_string)
   end
 
   def generate_uri_by_hash
-    URI::Generic.build(@uri_hash)
-  rescue URI::InvalidComponentError
+    ::URI::Generic.build(@uri_hash)
+  rescue ::URI::InvalidComponentError
+    raise unless Module.const_defined?(:Addressable)
     Addressable::URI.new(@uri_hash)
+  end
+
+  def uri_types
+    types = []
+    types << ::URI
+    types << Addressable::URI if Module.const_defined?(:Addressable)
   end
 end

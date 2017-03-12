@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-require 'diva/type'
-
 =begin rdoc
 Modelのキーの情報を格納する。
 キーひとつにつき1つのインスタンスが作られる。
@@ -13,10 +11,12 @@ module Diva
     # [name] Symbol フィールドの名前
     # [type] Symbol フィールドのタイプ。:int, :string, :bool, :time のほか、Diva::Modelのサブクラスを指定する
     # [required] boolean _true_ なら、この項目を必須とする
-    def initialize(name, type, required: false)
+    def initialize(name, type, options = {})
+      options = {required: false}.merge(options)
+
       @name = name.to_sym
       @type = Diva::Type.optional(Diva::Type(type))
-      @required = !!required
+      @required = !!options[:required]
     end
 
     def required?

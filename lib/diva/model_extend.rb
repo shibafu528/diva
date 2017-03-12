@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
-require 'diva/field'
-require 'diva/type'
+# どうしようね
+module Gem
+  module Deprecate
+    def deprecate(*arg)
+    end
+  end
+end
 
 =begin rdoc
 Diva::Model のクラスメソッド
@@ -30,9 +35,11 @@ module Diva::ModelExtend
   # [field_name] Symbol フィールドの名前
   # [type] Symbol フィールドのタイプ。:int, :string, :bool, :time のほか、Diva::Modelのサブクラスを指定する
   # [required] boolean _true_ なら、この項目を必須とする
-  def add_field(field, type: nil, required: false)
+  def add_field(field, options = {})
+    options = {type: nil, required: false}.merge(options)
+
     if field.is_a?(Symbol)
-      field = Diva::Field.new(field, type, required: required)
+      field = Diva::Field.new(field, options[:type], required: options[:required])
     end
     (@fields ||= []) << field
     define_method(field.name) do
