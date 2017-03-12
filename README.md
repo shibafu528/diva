@@ -1,4 +1,4 @@
-# Pluggaloid for mruby
+# Diva for mruby
 
 [diva](https://github.com/toshia/diva) gemをmrubyにポーティングしたものです。
 
