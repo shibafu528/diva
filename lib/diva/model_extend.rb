@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# どうしようね
-module Gem
-  module Deprecate
-    def deprecate(*arg)
-    end
-  end
-end
-
 =begin rdoc
 Diva::Model のクラスメソッド
 =end
 module Diva::ModelExtend
-  extend Gem::Deprecate
+  if Module.const_defined?(:Gem)
+    extend Gem::Deprecate
+  else
+    def self.deprecate(*arg); end
+  end
 
   attr_reader :slug, :spec
 
