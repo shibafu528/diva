@@ -8,6 +8,5 @@ MRuby::Gem::Specification.new('mruby-diva') do |spec|
   
   spec.add_dependency 'mruby-struct', :core => 'mruby-struct'
   spec.add_dependency 'mruby-secure-random', :github => 'monochromegane/mruby-secure-random'
-  #spec.add_dependency 'mruby-uri', :github => 'zzak/mruby-uri'
-  spec.add_dependency 'mruby-uri', :github => 'ksss/mruby-uri', :branch => 'nomethoderror'
+  spec.add_dependency 'mruby-uri', :github => 'zzak/mruby-uri'
 end
