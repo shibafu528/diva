@@ -8,6 +8,7 @@ module Diva::ModelExtend; end
 
 class Diva::Model
   include Comparable
+  include Diva::Combinable
   extend Diva::ModelExtend
 
   def initialize(args)
