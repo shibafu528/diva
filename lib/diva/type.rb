@@ -17,7 +17,7 @@ Modelフィールドの制約には以下のようなものがある。
 [BOOL] 真理値(true|false)
 [STRING] 文字列(String)
 [TIME] 時刻(Time)
-[URI] URI(Diva::URI|URI::Generic|Addressable::URI)
+[URI] URI(Diva::URI|URI::Generic)
 
 === Model
 Diva::Modelのサブクラスであれば、それを制約とすることができる。
@@ -155,9 +155,9 @@ module Diva::Type
       raise Diva::InvalidTypeError, "The value is not a `#{name}'."
     end
   end
-  URI = AtomicType.new(:uri, [Diva::URI, Addressable::URI, ::URI::Generic]) do |v|
+  URI = AtomicType.new(:uri, [Diva::URI, ::URI::Generic]) do |v|
     case v
-    when Diva::URI, Addressable::URI, ::URI::Generic
+    when Diva::URI, ::URI::Generic
       v
     when String
       Diva::URI.new(v)

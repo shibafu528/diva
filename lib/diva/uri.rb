@@ -118,20 +118,17 @@ class Diva::URI
   def generate_uri_by_string
     ::URI.parse(@uri_string)
   rescue ::URI::Error
-    raise unless Module.const_defined?(:Addressable)
-    Addressable::URI.parse(@uri_string)
+    raise
   end
 
   def generate_uri_by_hash
     ::URI::Generic.build(@uri_hash)
   rescue ::URI::Error
-    raise unless Module.const_defined?(:Addressable)
-    Addressable::URI.new(@uri_hash)
+    raise
   end
 
   def uri_types
     types = []
     types << ::URI
-    types << Addressable::URI if Module.const_defined?(:Addressable)
   end
 end
