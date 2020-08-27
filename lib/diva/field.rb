@@ -11,12 +11,10 @@ module Diva
     # [name] Symbol フィールドの名前
     # [type] Symbol フィールドのタイプ。:int, :string, :bool, :time のほか、Diva::Modelのサブクラスを指定する
     # [required] boolean _true_ なら、この項目を必須とする
-    def initialize(name, type, options = {})
-      options = {required: false}.merge(options)
-
+    def initialize(name, type, required: false)
       @name = name.to_sym
       @type = Diva::Type.optional(Diva::Type(type))
-      @required = !!options[:required]
+      @required = !!required
     end
 
     def dump_for_json(value)
