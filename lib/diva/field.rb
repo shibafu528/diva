@@ -19,8 +19,19 @@ module Diva
       @required = !!options[:required]
     end
 
+    def dump_for_json(value)
+      type.dump_for_json(value)
+    end
+
     def required?
       required
+    end
+
+    def schema
+      {
+        name: @name.to_s,
+        constraint: @type.schema
+      }
     end
 
     def to_sym

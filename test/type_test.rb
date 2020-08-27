@@ -370,10 +370,13 @@ describe 'Type' do
 
       describe 'stringから' do
         it '"39"を' do
-          assert_equal Time.new(39), Diva::Type::TIME.cast("39")
+          assert_raises(ArgumentError){ Diva::Type::TIME.cast("39") }
         end
         it '"abc"を' do
-          assert_equal Time.new("abc"), Diva::Type::TIME.cast("abc")
+          assert_raises(ArgumentError){ Diva::Type::TIME.cast("abc") }
+        end
+        it '"2017-12-26T12:46:45+09:00"を' do
+          assert_equal Time.new(2017, 12, 26, 12, 46, 45, '+09:00'), Diva::Type::TIME.cast("2017-12-26T12:46:45+09:00")
         end
       end
 
@@ -415,6 +418,13 @@ describe 'Type' do
         assert_raises(Diva::InvalidTypeError) do
           Diva::Type::TIME.cast(['156'])
         end
+      end
+    end
+
+    describe 'JSONダンプ' do
+      it 'ダンプする' do
+        time = Time.new(2017, 12, 26, 12, 46, 45, '+09:00')
+        assert_equal time.iso8601, Diva::Type::TIME.dump_for_json(time)
       end
     end
   end
@@ -852,6 +862,77 @@ describe 'Type' do
         end
       end
 
+    end
+
+    describe 'Union' do
+      before do
+        @constraint = Diva::Type.union(Diva::Type::STRING, Diva::Type::INT)
+      end
+
+      describe 'キャスト' do
+        it 'intから' do
+          assert_equal 39, @constraint.cast(39)
+        end
+
+        it 'floatから' do
+          assert_equal "39.25", @constraint.cast(39.25)
+        end
+
+        describe 'boolから' do
+          it 'true' do
+            assert_equal 'true', @constraint.cast(true)
+          end
+          it 'false' do
+            assert_equal 'false', @constraint.cast(false)
+          end
+        end
+
+        describe 'stringから' do
+          it '"39"を' do
+            assert_equal '39', @constraint.cast("39")
+          end
+          it '"abc"を' do
+            assert_equal 'abc', @constraint.cast("abc")
+          end
+        end
+
+        it 'Timeから' do
+          time = Time.new(2009, 12, 25)
+          assert_equal time.to_s, @constraint.cast(time)
+        end
+
+        it 'URI::Genericから' do
+          expect = 'http://mikutter.hachune.net/'
+          uri = URI.parse(expect)
+          assert_equal expect, @constraint.cast(uri)
+        end
+
+        it 'Diva::URIから' do
+          expect = 'http://mikutter.hachune.net/'
+          uri = Diva::URI.new(expect)
+          assert_equal expect, @constraint.cast(uri)
+        end
+
+        it 'Addressable::URIから' do
+          expect = 'http://mikutter.hachune.net/'
+          uri = Addressable::URI.parse(expect)
+          assert_equal expect, @constraint.cast(uri)
+        end
+
+        it 'Modelから' do
+          mk = Class.new(Diva::Model)
+          mi = mk.new({})
+          assert_raises(Diva::InvalidTypeError) do
+            @constraint.cast(mi)
+          end
+        end
+
+        it '配列から' do
+          assert_raises(Diva::InvalidTypeError) do
+            @constraint.cast(['156'])
+          end
+        end
+      end
     end
 
   end

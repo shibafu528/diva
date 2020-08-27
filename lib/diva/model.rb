@@ -81,6 +81,12 @@ class Diva::Model
     Hash[self.class.fields.map{|f| [f.name, fetch(f.name)] }]
   end
 
+  def to_json(*rest)
+    Hash[
+      self.class.fields.map{|f| [f.name, f.dump_for_json(fetch(f.name))] }
+    ].to_json(*rest)
+  end
+
   # カラムの生の内容を返す
   def fetch(key)
     @value[key.to_sym]
@@ -132,6 +138,16 @@ class Diva::Model
       description.gsub("\n", '')
     else
       to_s.gsub("\n", '')
+    end
+  end
+
+  def dig(key, *args)
+    return nil unless key.respond_to?(:to_sym)
+    value = fetch(key)
+    if value.nil? || args.empty?
+      value
+    else
+      value.dig(*args)
     end
   end
 

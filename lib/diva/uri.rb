@@ -29,6 +29,7 @@ Diva::URI() メソッドの引数にString, URI, Addressable::URI, Hash, Diva::U
 
 class Diva::URI
   def initialize(uri)
+    @uri = @uri_string = @uri_hash = nil
     case uri.freeze
     when *uri_types
       @uri = uri
@@ -41,8 +42,8 @@ class Diva::URI
 
   def ==(other)
     case other
-    when *uri_types
-      other == to_uri
+    when *uri_types, String
+      other.to_s == self.to_s
     when Diva::URI
       if has_string? or other.has_string?
         to_s == other.to_s
@@ -93,8 +94,8 @@ class Diva::URI
     super
   end
 
-  def respond_to?(method)
-    super or to_uri.respond_to?(method)
+  def respond_to_missing?(method, include_private)
+    to_uri.respond_to?(method, include_private)
   end
 
   def method_missing(method, *rest, &block)
@@ -116,14 +117,14 @@ class Diva::URI
 
   def generate_uri_by_string
     ::URI.parse(@uri_string)
-  rescue ::URI::InvalidComponentError
+  rescue ::URI::Error
     raise unless Module.const_defined?(:Addressable)
     Addressable::URI.parse(@uri_string)
   end
 
   def generate_uri_by_hash
     ::URI::Generic.build(@uri_hash)
-  rescue ::URI::InvalidComponentError
+  rescue ::URI::Error
     raise unless Module.const_defined?(:Addressable)
     Addressable::URI.new(@uri_hash)
   end
